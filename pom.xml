@@ -16,109 +16,123 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10-FINAL</version>
 		</dependency>
+
+
+
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-api</artifactId>
+			<version>2.5</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.5</version>
+		</dependency>
 	</dependencies>
 
 	<groupId>project_management.task_tracking</groupId>
-	
-	
+
+
 	<build>
 		<plugins>
 			<plugin>
-		        <artifactId>maven-resources-plugin</artifactId>
-		        <version>2.7</version>
-		        <executions>
-		          <execution>
-		            <id>copy-resources</id>
-		            <!-- here the phase you need -->
-		            <phase>package</phase>
-		            <goals>
-		              <goal>copy-resources</goal>
-		            </goals>
-		            <configuration>
-		              <outputDirectory>${basedir}/target/configuration</outputDirectory>
-		              <resources>          
-		                <resource>
-		                <targetPath>conf</targetPath>
-		                  <directory>conf</directory>
-		                  <filtering>false</filtering>
-		                </resource>
-		                <resource>
-		                <targetPath>images</targetPath>
-		                  <directory>images</directory>
-		                  <filtering>false</filtering>
-		                </resource>
-		              </resources>              
-		            </configuration>            
-		          </execution>
-		        </executions>
-	      	</plugin>
-		
-			 <plugin>
-		            <groupId>org.apache.maven.plugins</groupId>
-		            <artifactId>maven-shade-plugin</artifactId>
-		            <version>1.7.1</version>
-		            <executions>
-		                <execution>
-		                    <phase>package</phase>
-		                    <goals>
-		                        <goal>shade</goal>
-		                    </goals>
-		                </execution>
-		            </executions>
-		            <configuration>
-		                <shadedArtifactAttached>true</shadedArtifactAttached>
-		                <shadedClassifierName>shaded</shadedClassifierName>
-		                <transformers>
-		                    <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-		                        <mainClass>project_management.task_tracking.Main.TaskTracking</mainClass>
-		                    </transformer>
-		                </transformers>
-		            </configuration>
-		     </plugin>
-		     <plugin>
-            <groupId>com.akathist.maven.plugins.launch4j</groupId>
-            <artifactId>launch4j-maven-plugin</artifactId>
-            <version>1.5.1</version>
-            <executions>
-                <execution>
-                    <id>l4j-clui</id>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>launch4j</goal>
-                    </goals>
-                    <configuration>
-                        <headerType>gui</headerType>
-                        <jar>${project.build.directory}/${artifactId}-${version}-shaded.jar</jar>
-                        <outfile>${project.build.directory}/task_tacking.exe</outfile>
-                        <downloadUrl>http://java.com/download</downloadUrl>
-                        <classPath>
-                            <mainClass>project_management.task_tracking.Main.TaskTracking</mainClass>
-                            <preCp>anything</preCp>
-                        </classPath>
-                        <icon>src/main/resources/icon/task_tracking.ico</icon>
-                        <jre>
-                            <minVersion>1.6.0</minVersion>
-                            <jdkPreference>preferJre</jdkPreference>
-                        </jre>
-                        <versionInfo>
-                            <fileVersion>1.0.0.0</fileVersion>
-                            <txtFileVersion>${project.version}</txtFileVersion>
-                            <fileDescription>${project.name}</fileDescription>
-                            <copyright>hlx</copyright>
-                            <productVersion>1.0.0.0</productVersion>
-                            <txtProductVersion>1.0.0.0</txtProductVersion>
-                            <productName>${project.name}</productName>
-                            <companyName>hlx</companyName>
-                            <internalName>hlx</internalName>
-                            <originalFilename>task_tracking.exe</originalFilename>
-                        </versionInfo>
-                    </configuration>
-                </execution>
-            </executions>
-        </plugin>
-		
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.7</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						<!-- here the phase you need -->
+						<phase>package</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${basedir}/target/configuration</outputDirectory>
+							<resources>
+								<resource>
+									<targetPath>conf</targetPath>
+									<directory>conf</directory>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
+									<targetPath>images</targetPath>
+									<directory>images</directory>
+									<filtering>false</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>1.7.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<shadedArtifactAttached>true</shadedArtifactAttached>
+					<shadedClassifierName>shaded</shadedClassifierName>
+					<transformers>
+						<transformer
+							implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+							<mainClass>project_management.task_tracking.Main.TaskTracking</mainClass>
+						</transformer>
+					</transformers>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>com.akathist.maven.plugins.launch4j</groupId>
+				<artifactId>launch4j-maven-plugin</artifactId>
+				<version>1.5.1</version>
+				<executions>
+					<execution>
+						<id>l4j-clui</id>
+						<phase>package</phase>
+						<goals>
+							<goal>launch4j</goal>
+						</goals>
+						<configuration>
+							<headerType>gui</headerType>
+							<jar>${project.build.directory}/${artifactId}-${version}-shaded.jar</jar>
+							<outfile>${project.build.directory}/task_tacking.exe</outfile>
+							<downloadUrl>http://java.com/download</downloadUrl>
+							<classPath>
+								<mainClass>project_management.task_tracking.Main.TaskTracking</mainClass>
+								<preCp>anything</preCp>
+							</classPath>
+							<icon>src/main/resources/icon/task_tracking.ico</icon>
+							<jre>
+								<minVersion>1.6.0</minVersion>
+								<jdkPreference>preferJre</jdkPreference>
+							</jre>
+							<versionInfo>
+								<fileVersion>1.0.0.0</fileVersion>
+								<txtFileVersion>${project.version}</txtFileVersion>
+								<fileDescription>${project.name}</fileDescription>
+								<copyright>hlx</copyright>
+								<productVersion>1.0.0.0</productVersion>
+								<txtProductVersion>1.0.0.0</txtProductVersion>
+								<productName>${project.name}</productName>
+								<companyName>hlx</companyName>
+								<internalName>hlx</internalName>
+								<originalFilename>task_tracking.exe</originalFilename>
+							</versionInfo>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
-	
-	
+
+
 	</build>
 </project>

@@ -14,10 +14,15 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import project_management.task_tracking.ExcelUtils.WriteInExcel;
 
 public class AddTrayIcon {
-	
+
+	private static final Logger logger = LogManager.getLogger(AddTrayIcon.class);
+
 	private static String dirPath;
 
 	public static String getDirPath() {
@@ -29,58 +34,57 @@ public class AddTrayIcon {
 	}
 
 	public AddTrayIcon() {
-	
+
 		loadProperties();
-		
+
 		Toolkit tlk = Toolkit.getDefaultToolkit();
-		
-		 if (!SystemTray.isSupported()) {
-	            System.out.println("SystemTray is not supported");
-	            return;
-        }
-		 
-		 Image icon = tlk.createImage("images/task_tracking.png");
-		 final TrayIcon trayIcon = new TrayIcon(icon);
-		 final SystemTray tray = SystemTray.getSystemTray();
-		
-		 
-		 MouseListener listener = new MouseListener()
-		    {
-		      
 
-				public void mouseClicked(MouseEvent e) {
-					if(e.getModifiers()==InputEvent.BUTTON1_MASK){
-						new WriteInExcel(getDirPath());
-					}else if(e.getModifiers()==InputEvent.BUTTON3_MASK){
-						System.out.println("Fermeture du programme !");
-						tray.remove(trayIcon);
-						System.exit(0);
-					}
+		if (!SystemTray.isSupported()) {
+			logger.error("SystemTray is not supported");
+			return;
+		}
+
+		Image icon = tlk.createImage("images/task_tracking.png");
+		final TrayIcon trayIcon = new TrayIcon(icon);
+		final SystemTray tray = SystemTray.getSystemTray();
+
+		MouseListener listener = new MouseListener() {
+
+			public void mouseClicked(MouseEvent e) {
+				if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
+					new WriteInExcel(getDirPath());
+				} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
+					logger.trace("Fermeture du programme !");
+					tray.remove(trayIcon);
+					System.exit(0);
 				}
+			}
 
-				public void mousePressed(MouseEvent e) {				}
+			public void mousePressed(MouseEvent e) {
+			}
 
-				public void mouseReleased(MouseEvent e) {				}
+			public void mouseReleased(MouseEvent e) {
+			}
 
-				public void mouseEntered(MouseEvent e) {				}
+			public void mouseEntered(MouseEvent e) {
+			}
 
-				public void mouseExited(MouseEvent e) {					}				
-		    };
-		    
-		    
-		 trayIcon.addMouseListener(listener);
-		 
-		 try {
-	            tray.add(trayIcon);
-	        } catch (AWTException e) {
-	            System.out.println("TrayIcon could not be added.");
-	        }
-		
+			public void mouseExited(MouseEvent e) {
+			}
+		};
+
+		trayIcon.addMouseListener(listener);
+
+		try {
+			tray.add(trayIcon);
+		} catch (AWTException e) {
+			logger.error("TrayIcon could not be added.");
+		}
+
 	}
-	
-	
-	private void loadProperties(){
-		
+
+	private void loadProperties() {
+
 		File file = new File("conf/application.properties");
 		FileInputStream fileInput;
 		Properties properties = new Properties();
@@ -94,9 +98,9 @@ public class AddTrayIcon {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		dirPath = properties.getProperty("directory.location");
-		
+
 	}
 
 }

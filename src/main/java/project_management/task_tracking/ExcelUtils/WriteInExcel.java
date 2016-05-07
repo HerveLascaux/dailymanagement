@@ -21,12 +21,18 @@ import java.io.IOException;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import project_management.task_tracking.TaskBarUtils.AddTrayIcon;
+
 public class WriteInExcel extends Frame {
+	
+	private static final Logger logger = LogManager.getLogger(WriteInExcel.class);
 
 	/**
 	 * 
@@ -195,10 +201,10 @@ public class WriteInExcel extends Frame {
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error(e.getMessage());
 		}
 	}
 	
