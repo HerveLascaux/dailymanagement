@@ -1,6 +1,7 @@
 package project_management.task_tracking.TaskBarUtils;
 
 import java.awt.AWTException;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.Toolkit;
@@ -18,12 +19,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import project_management.task_tracking.ExcelUtils.WriteInExcel;
+import project_management.task_tracking.View.TaskFrame;
 
 public class AddTrayIcon {
 
 	private static final Logger logger = LogManager.getLogger(AddTrayIcon.class);
 
 	private static String dirPath;
+	
+	private Frame currentFrame;
 
 	public static String getDirPath() {
 		return dirPath;
@@ -52,7 +56,11 @@ public class AddTrayIcon {
 
 			public void mouseClicked(MouseEvent e) {
 				if (e.getModifiers() == InputEvent.BUTTON1_MASK) {
-					new WriteInExcel(getDirPath());
+					if(currentFrame == null || !currentFrame.isDisplayable()){
+						currentFrame = new TaskFrame(getDirPath());
+					}else{
+						logger.trace("A frame is already opened");
+					}
 				} else if (e.getModifiers() == InputEvent.BUTTON3_MASK) {
 					logger.trace("Fermeture du programme !");
 					tray.remove(trayIcon);
