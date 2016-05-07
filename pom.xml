@@ -62,6 +62,12 @@
 									<filtering>false</filtering>
 								</resource>
 								<resource>
+									<targetPath>conf</targetPath>
+									<directory>src/main/resources</directory>
+									<include>log4j2.xml</include>
+									<filtering>false</filtering>
+								</resource>
+								<resource>
 									<targetPath>images</targetPath>
 									<directory>images</directory>
 									<filtering>false</filtering>
