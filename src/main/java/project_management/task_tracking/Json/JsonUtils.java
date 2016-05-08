@@ -1,9 +1,7 @@
 package project_management.task_tracking.Json;
 
-import java.awt.TextArea;
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
@@ -11,14 +9,16 @@ import java.util.Calendar;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import project_management.task_tracking.BO.MonthJson;
 
 public class JsonUtils {
 	
@@ -50,11 +50,29 @@ public class JsonUtils {
 	}
 
 	private final void readJsonFile(){
+		
+		ObjectMapper mapper = new ObjectMapper();
+		
+		try {
+			MonthJson current = mapper.readValue(new File(jsonFile), MonthJson.class);
+			logger.trace(current);
+		} catch (JsonParseException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (JsonMappingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		JSONParser parser = new JSONParser();
 		
 		Object obj;
 		try {
 			obj = parser.parse(new FileReader(jsonFile));
+			
 			
 			JSONObject jsonObject = (JSONObject) obj;
 			JSONArray dayList = (JSONArray) jsonObject.get("dayList");
@@ -66,7 +84,7 @@ public class JsonUtils {
 			String tasks = "";
 			
 			for (int i = 0; i < dayTasks.size(); i++) {
-				tasks += ((JSONObject)dayTasks.get(i)).get("task");
+				tasks += ((JSONObject)dayTasks.get(i)).get("text");
 				tasks += "\n";
 			}
 			
