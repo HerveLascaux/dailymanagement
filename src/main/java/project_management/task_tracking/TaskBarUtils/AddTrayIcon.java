@@ -18,7 +18,7 @@ import java.util.Properties;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import project_management.task_tracking.ExcelUtils.WriteInExcel;
+import project_management.task_tracking.Excel.WriteInExcel;
 import project_management.task_tracking.View.TaskFrame;
 
 public class AddTrayIcon {

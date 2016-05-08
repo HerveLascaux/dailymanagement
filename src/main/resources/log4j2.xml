@@ -12,8 +12,8 @@
 		<Root level="trace">
 			<AppenderRef ref="Console" />
 		</Root>
-		<Root level="error">
+<!-- 		<Root level="error">
 			<AppenderRef ref="File" />
-		</Root>
+		</Root> -->
 	</Loggers>
 </Configuration>

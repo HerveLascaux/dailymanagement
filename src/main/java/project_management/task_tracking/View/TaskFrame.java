@@ -28,7 +28,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import project_management.task_tracking.ExcelUtils.WriteInExcel;
+import project_management.task_tracking.Excel.WriteInExcel;
+import project_management.task_tracking.Json.JsonUtils;
 
 public class TaskFrame extends Frame implements ActionListener{
 
@@ -49,14 +50,27 @@ public class TaskFrame extends Frame implements ActionListener{
 	private String xlsxFile;
 	private int dayNumber;
 	private int lastKey;
+	
+	private JsonUtils jsonutils;
 
 	private WriteInExcel excelWritter;
 	
 	public TaskFrame(String dirPath) {
 		super();
+		
+		// Handle Excel
 		excelWritter = new WriteInExcel(dirPath);
+		String tasks = excelWritter.readExcelFile();
+		
+		// Handle JSON
+		jsonutils = new JsonUtils(dirPath);
+		
 		setFrameConfiguration();
 		createFrameComponents();
+		
+		
+		textArea.setText(tasks);
+		textArea.setCaretPosition(tasks.length());
 		
 		setVisible(true);
 		setAlwaysOnTop(true);
@@ -93,19 +107,9 @@ public class TaskFrame extends Frame implements ActionListener{
 					public void keyPressed(KeyEvent e) {
 						// TODO Auto-generated method stub
 						if(getLastKey() == KeyEvent.VK_CONTROL && e.getKeyCode()== KeyEvent.VK_ENTER){
+							
 							String dailyAction = getTextArea().getText();
-							getCurrentCell().setCellValue(dailyAction);
-
-							try {
-								FileOutputStream os = new FileOutputStream(xlsxFile);
-								getMyWorkBook().write(os);
-								os.close();
-							} catch (FileNotFoundException e1) {
-								e1.printStackTrace();
-							} catch (IOException e1) {
-								e1.printStackTrace();
-							}
-
+							excelWritter.writeTextInCell(dailyAction);
 							setVisible(false);
 							dispose();
 						}
@@ -152,12 +156,6 @@ public class TaskFrame extends Frame implements ActionListener{
 				
 	}
 	
-	
-
-	public final Cell getCurrentCell() {
-		return currentCell;
-	}
-
 	public int getLastKey() {
 		return lastKey;
 	}
@@ -166,22 +164,9 @@ public class TaskFrame extends Frame implements ActionListener{
 		this.lastKey = lastKey;
 	}
 
-	public final FileInputStream getFis() {
-		return fis;
-	}
-
 	public final TextArea getTextArea() {
 		return textArea;
 	}
-
-	public final XSSFWorkbook getMyWorkBook() {
-		return myWorkBook;
-	}
-
-	public final String getXlsxFile() {
-		return xlsxFile;
-	}
-
 
 	public void actionPerformed(ActionEvent e) {
 		String dailyAction = getTextArea().getText();
@@ -189,7 +174,6 @@ public class TaskFrame extends Frame implements ActionListener{
 
 		setVisible(false);
 		dispose();
-				
 	}
 	
 }

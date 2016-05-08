@@ -1,19 +1,6 @@
-package project_management.task_tracking.ExcelUtils;
+package project_management.task_tracking.Excel;
 
-import java.awt.BorderLayout;
-import java.awt.Button;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Frame;
-import java.awt.Insets;
-import java.awt.Panel;
 import java.awt.TextArea;
-import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -27,8 +14,6 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import project_management.task_tracking.TaskBarUtils.AddTrayIcon;
 
 public class WriteInExcel  {
 	
@@ -48,8 +33,6 @@ public class WriteInExcel  {
 
 	public WriteInExcel(String dirPath) {
 		setExcelConfiguration(dirPath);
-		readExcelFile();
-		
 	}
 
 	private final void setExcelConfiguration(String dirPath) {
@@ -64,7 +47,7 @@ public class WriteInExcel  {
 		dayNumber = cal.get(Calendar.DAY_OF_MONTH);
 	}
 
-	private final void readExcelFile(){
+	public String readExcelFile(){
 		FileInputStream fis;
 		try {
 			fis = new FileInputStream(xlsxFile);
@@ -78,11 +61,10 @@ public class WriteInExcel  {
 			currentCell = currentRow.getCell(0);
 			if (currentCell == null){
 				currentCell = currentRow.createCell(0);
+				return "";
 			} else {
-				textArea.setText(currentCell.getStringCellValue());
-				textArea.setCaretPosition(textArea.getText().length());
+				return currentCell.getStringCellValue();
 			}
-
 
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -91,6 +73,8 @@ public class WriteInExcel  {
 			// TODO Auto-generated catch block
 			logger.error(e.getMessage());
 		}
+		
+		return "";
 	}
 	
 
@@ -132,9 +116,9 @@ public class WriteInExcel  {
 			os.close();
 			result = true;
 		} catch (FileNotFoundException e1) {
-			e1.printStackTrace();
+			logger.error(e1.getMessage());
 		} catch (IOException e1) {
-			e1.printStackTrace();
+			logger.error(e1.getMessage());
 		}
 		
 		return result;
