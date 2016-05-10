@@ -80,20 +80,22 @@ public class TaskFrame extends JFrame implements ActionListener{
 		setLocation(screenSize.width - getWidth(), screenSize.height
 				- taskBarSize - getHeight());
 		setUndecorated(true);
+		
+		setBackground(new Color(215,206,242));
 
 	}
 	
 	private final void createFrameComponents(){
 		// Creation des composant de la fenetre
-				textArea = new JTextArea(8,0);
+				textArea = new JTextArea();
 				textArea.setLineWrap(true);
 				DefaultCaret caret = (DefaultCaret)textArea.getCaret();
 				caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-				JScrollPane scrollPane= new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				JScrollPane scrollPane= new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 				scrollPane.setAutoscrolls(true);
-				scrollPane.setLayout(new ScrollPaneLayout());
-				scrollPane.setMaximumSize(new Dimension(textArea.getWidth(), textArea.getHeight()));
 				textArea.setBackground(new Color(215,206,242));
+				textArea.setBorder(BorderFactory.createEmptyBorder());
+				scrollPane.setBorder(BorderFactory.createEmptyBorder());
 				//Ajout d'un listener pour enregistrer quand on appuie sur CTRL+ENTER
 				textArea.addKeyListener(new KeyListener(){
 
@@ -146,9 +148,10 @@ public class TaskFrame extends JFrame implements ActionListener{
 				buttonContainer.add(cancel);
 				buttonContainer.add(save);
 				buttonContainer.setPreferredSize(new Dimension(10,30));
-				textContainer.setLayout(new FlowLayout());
-				textContainer.add(scrollPane);
-				add("Center", textArea);
+				textContainer.setLayout(new BorderLayout());
+				textContainer.add("Center", scrollPane);
+				textContainer.setPreferredSize(new Dimension(10,80));
+				add("Center", textContainer);
 				add("South", buttonContainer);
 
 				// Creation du listener pour le bouton save
