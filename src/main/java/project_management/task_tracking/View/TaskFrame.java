@@ -114,6 +114,11 @@ public class TaskFrame extends JFrame implements ActionListener{
 						if(e.getKeyCode() == KeyEvent.VK_CONTROL){
 							setLastKey(e.getKeyCode());
 						}
+						
+						if(e.getKeyCode() == KeyEvent.VK_ESCAPE){
+							setVisible(false);
+							dispose();
+						}
 					}
 
 					public void keyReleased(KeyEvent e) {
