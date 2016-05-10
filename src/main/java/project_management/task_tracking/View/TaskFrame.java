@@ -1,37 +1,33 @@
 package project_management.task_tracking.View;
 
 import java.awt.BorderLayout;
-import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Frame;
+import java.awt.GridLayout;
 import java.awt.Insets;
-import java.awt.Panel;
-import java.awt.TextArea;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.DateFormatSymbols;
-import java.util.Calendar;
+
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.ScrollPaneLayout;
+import javax.swing.text.DefaultCaret;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import project_management.task_tracking.Excel.WriteInExcel;
 import project_management.task_tracking.Json.JsonUtils;
 
-public class TaskFrame extends Frame implements ActionListener{
+public class TaskFrame extends JFrame implements ActionListener{
 
 	/**
 	 * 
@@ -43,12 +39,7 @@ public class TaskFrame extends Frame implements ActionListener{
 	/**
 	 * 
 	 */
-	private Cell currentCell;
-	private FileInputStream fis;
-	private TextArea textArea;
-	private XSSFWorkbook myWorkBook;
-	private String xlsxFile;
-	private int dayNumber;
+	private JTextArea textArea;
 	private int lastKey;
 	
 	private JsonUtils jsonutils;
@@ -94,8 +85,15 @@ public class TaskFrame extends Frame implements ActionListener{
 	
 	private final void createFrameComponents(){
 		// Creation des composant de la fenetre
-				textArea = new TextArea("", 0,0, TextArea.SCROLLBARS_NONE);
-				textArea.setBackground(new Color(250,250,205));
+				textArea = new JTextArea(8,0);
+				textArea.setLineWrap(true);
+				DefaultCaret caret = (DefaultCaret)textArea.getCaret();
+				caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
+				JScrollPane scrollPane= new JScrollPane(textArea, JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+				scrollPane.setAutoscrolls(true);
+				scrollPane.setLayout(new ScrollPaneLayout());
+				scrollPane.setMaximumSize(new Dimension(textArea.getWidth(), textArea.getHeight()));
+				textArea.setBackground(new Color(215,206,242));
 				//Ajout d'un listener pour enregistrer quand on appuie sur CTRL+ENTER
 				textArea.addKeyListener(new KeyListener(){
 
@@ -126,17 +124,25 @@ public class TaskFrame extends Frame implements ActionListener{
 					}});
 				
 				
-				Button save = new Button("Save");
-				Button cancel = new Button("Cancel");
+				JButton save = new JButton("Save");
+				save.setBackground(Color.GREEN);
+				save.setForeground(Color.BLACK);
+				save.setBorder(BorderFactory.createLineBorder(new Color(215,206,242)));
+				JButton cancel = new JButton("Cancel");
+				cancel.setBackground(new Color(255,0,0));
+				cancel.setForeground(Color.BLACK);
+				cancel.setBorder(BorderFactory.createLineBorder(new Color(215,206,242)));
 				BorderLayout firstLayout = new BorderLayout();
-				Panel textContainer = new Panel();
-				Panel buttonContainer = new Panel();
+				JPanel textContainer = new JPanel();
+				JPanel buttonContainer = new JPanel();
 				buttonContainer.setBackground(new Color(238,238,238));
 				setLayout(firstLayout);
-				buttonContainer.setLayout(new FlowLayout());
+				buttonContainer.setLayout(new GridLayout(1,2));
 				buttonContainer.add(cancel);
 				buttonContainer.add(save);
-				textContainer.add(textArea);
+				buttonContainer.setPreferredSize(new Dimension(10,30));
+				textContainer.setLayout(new FlowLayout());
+				textContainer.add(scrollPane);
 				add("Center", textArea);
 				add("South", buttonContainer);
 
@@ -164,7 +170,7 @@ public class TaskFrame extends Frame implements ActionListener{
 		this.lastKey = lastKey;
 	}
 
-	public final TextArea getTextArea() {
+	public final JTextArea getTextArea() {
 		return textArea;
 	}
 
