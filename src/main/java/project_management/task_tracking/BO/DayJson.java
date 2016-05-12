@@ -5,18 +5,22 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Day {
+public class DayJson {
 	@JsonProperty("dayNumber")
 	private String dayNumber;
 	@JsonProperty("dayTasks")
 	private List<Task> dayTasks;
 	
-	public Day() {
+	public DayJson() {
 		dayNumber = "";
 		dayTasks = new ArrayList<Task>();
 	}
-	public Day(String dayNumber, List<Task> dayTasks) {
-		super();
+	
+	public DayJson(String dayNumber) {
+		this.dayNumber = dayNumber;
+		this.dayTasks = new ArrayList<Task>();
+	}
+	public DayJson(String dayNumber, List<Task> dayTasks) {
 		this.dayNumber = dayNumber;
 		this.dayTasks = dayTasks;
 	}

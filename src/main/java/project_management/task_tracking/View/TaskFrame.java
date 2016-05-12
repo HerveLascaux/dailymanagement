@@ -50,11 +50,12 @@ public class TaskFrame extends JFrame implements ActionListener{
 		super();
 		
 		// Handle Excel
-		excelWritter = new WriteInExcel(dirPath);
-		String tasks = excelWritter.readExcelFile();
+		//excelWritter = new WriteInExcel(dirPath);
+	//String tasks = excelWritter.readExcelFile();
 		
 		// Handle JSON
 		jsonutils = new JsonUtils(dirPath);
+		String tasks = jsonutils.readJsonFile();
 		
 		setFrameConfiguration();
 		createFrameComponents();
@@ -96,11 +97,10 @@ public class TaskFrame extends JFrame implements ActionListener{
 				textArea.setBackground(new Color(215,206,242));
 				textArea.setBorder(BorderFactory.createEmptyBorder());
 				scrollPane.setBorder(BorderFactory.createEmptyBorder());
-				//Ajout d'un listener pour enregistrer quand on appuie sur CTRL+ENTER
+				//Ajout d'un listener pour enregistrer quand on appuie sur CTRL+ENTER et quitter pour ECHAP
 				textArea.addKeyListener(new KeyListener(){
 
 					public void keyTyped(KeyEvent e) {
-						// TODO Auto-generated method stub
 						
 					}
 
@@ -109,7 +109,8 @@ public class TaskFrame extends JFrame implements ActionListener{
 						if(getLastKey() == KeyEvent.VK_CONTROL && e.getKeyCode()== KeyEvent.VK_ENTER){
 							
 							String dailyAction = getTextArea().getText();
-							excelWritter.writeTextInCell(dailyAction);
+//							excelWritter.writeTextInCell(dailyAction);
+							jsonutils.writeJsonToFile(dailyAction);
 							setVisible(false);
 							dispose();
 						}
@@ -184,7 +185,8 @@ public class TaskFrame extends JFrame implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		String dailyAction = getTextArea().getText();
-		excelWritter.writeTextInCell(dailyAction);
+		//excelWritter.writeTextInCell(dailyAction);
+		jsonutils.writeJsonToFile(dailyAction);
 
 		setVisible(false);
 		dispose();

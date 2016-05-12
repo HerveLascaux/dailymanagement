@@ -1,24 +1,25 @@
 package project_management.task_tracking.Json;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.text.DateFormatSymbols;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import project_management.task_tracking.BO.DayJson;
 import project_management.task_tracking.BO.MonthJson;
+import project_management.task_tracking.BO.Task;
 
 public class JsonUtils {
 	
@@ -30,11 +31,13 @@ public class JsonUtils {
 	private static final long serialVersionUID = 6216260691258824277L;
 	private String jsonFile;
 	private int dayNumber;
-
+	
+	//JSON readed
+	private MonthJson jsonMonth;
+	private DayJson currentDay;
+	
 	public JsonUtils(String dirPath) {
 		setJsonConfiguration(dirPath);
-		readJsonFile();
-		
 	}
 
 	private final void setJsonConfiguration(String dirPath) {
@@ -45,84 +48,99 @@ public class JsonUtils {
 
 		jsonFile = dirPath + month + cal.get(Calendar.YEAR) + ".json";
 
-		// Recupération du jour de la date
+		// Recupération du jour courant
 		dayNumber = cal.get(Calendar.DAY_OF_MONTH);
 	}
 
-	private final void readJsonFile(){
-		
-		ObjectMapper mapper = new ObjectMapper();
-		
-		try {
-			MonthJson current = mapper.readValue(new File(jsonFile), MonthJson.class);
-			logger.trace(current);
-		} catch (JsonParseException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (JsonMappingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		JSONParser parser = new JSONParser();
-		
-		Object obj;
-		try {
-			obj = parser.parse(new FileReader(jsonFile));
+	public String readJsonFile(){
+		String result ="";
+		File currentJsonFile = new File(jsonFile);
+		if(!currentJsonFile.exists()){
+			initJsonFile(currentJsonFile);
+		}else{
+			ObjectMapper mapper = new ObjectMapper();
 			
-			
-			JSONObject jsonObject = (JSONObject) obj;
-			JSONArray dayList = (JSONArray) jsonObject.get("dayList");
-			
-			JSONObject currentDay = (JSONObject) dayList.get(0);
-			
-			JSONArray dayTasks =  (JSONArray) currentDay.get("dayTasks");
-			
-			String tasks = "";
-			
-			for (int i = 0; i < dayTasks.size(); i++) {
-				tasks += ((JSONObject)dayTasks.get(i)).get("text");
-				tasks += "\n";
+			try {
+				jsonMonth = mapper.readValue(currentJsonFile, MonthJson.class);
+
+				currentDay = jsonMonth.getDayByNumber(Integer.toString(dayNumber));
+				List<Task> dayTasks = currentDay.getDayTasks();
+				
+				if(dayTasks.isEmpty()){
+					return result;
+				}else{
+					for (int i = 0; i < dayTasks.size(); i++) {
+						if(i!=0){
+							result+="\n";
+						}
+						result+= dayTasks.get(i).getText();
+					}
+					return result;					
+				}
+				
+			} catch (JsonParseException e1) {
+				// TODO Auto-generated catch block
+				logger.error(e1.getMessage());
+			} catch (JsonMappingException e1) {
+				// TODO Auto-generated catch block
+				logger.error(e1.getMessage());
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				logger.error(e1.getMessage());
 			}
+		}
+		return result;
+		
+	}
+	
+
+	
+	private void initJsonFile(File currentJsonFile) {
+		List<DayJson> dayList = new ArrayList<DayJson>();
+		Calendar c = Calendar.getInstance();
+		for (int i = 1; i < c.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+			dayList.add(new DayJson(Integer.toString(i)));			
+		}
 			
-			logger.trace(tasks);
-		} catch (FileNotFoundException e) {
+		jsonMonth = new MonthJson(c.getDisplayName(Calendar.MONTH, Calendar.LONG_FORMAT, Locale.FRANCE), dayList);
+		currentDay = jsonMonth.getDayByNumber(Integer.toString(c.get(Calendar.DAY_OF_MONTH)));
+		
+		
+		writeJsonToFile("");
+	}
+
+	public boolean writeJsonToFile(String tasks){
+		currentDay.setDayTasks(stringToTasks(tasks));
+		
+		boolean result = false;
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+
+			mapper.writeValue(new File(jsonFile), jsonMonth);
+			result=true;
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			logger.error(e.getMessage());
+		} catch (JsonMappingException e) {
 			// TODO Auto-generated catch block
 			logger.error(e.getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			logger.error(e.getMessage());
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			logger.error(e.getMessage());
 		}
-		
-		
-		
-		
-	}
-	
-
-	
-	public boolean writeTextInCell(String dailyAction){
-		boolean result = false;
-//		getCurrentCell().setCellValue(dailyAction);
-//
-//		try {
-//			FileOutputStream os = new FileOutputStream(xlsxFile);
-//			getMyWorkBook().write(os);
-//			os.close();
-//			result = true;
-//		} catch (FileNotFoundException e1) {
-//			logger.error(e1.getMessage());
-//		} catch (IOException e1) {
-//			logger.error(e1.getMessage());
-//		}
-//		
 		return result;
 	}
+	
+	private List<Task> stringToTasks(String tasks){
+		String[] tasksArray = tasks.split("\n");
+		List<Task> dayTasks = new ArrayList<Task>();
+		
+		for (int i = 0; i < tasksArray.length; i++) {
+			dayTasks.add(new Task(tasksArray[i]));
+		}
+		
+		return dayTasks;
+	}
+	
 
 }
